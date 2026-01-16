@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}USER SIGNUP PAGE{% endblock %}
+
+{% block content %}
+
+<h1 class="text-danger">signup</h1>
+
+<div>
+    <form method="post" class="d-flex flex-column gap-2">
+        {% csrf_token %}
+        <input type="text" placeholder="enter name" name="username">
+        <input type="text" placeholder="enter email" name="email">
+        <input type="password" placeholder="enter password" name="password1">
+        <input type="password" placeholder="enter password" name="password2">
+        <button type="submit">signup</button>
+    </form>
+</div>
