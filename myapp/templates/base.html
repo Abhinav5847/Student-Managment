@@ -33,10 +33,22 @@
 </nav>
 
 
+
+
 <main class="container my-4 flex-grow-1">
     {% block content %}
+
     {% endblock %}
 </main>
+
+    {% if messages %}
+    {% for msg in messages %}
+     <!-- <div class="alert alert-danger w-25">
+         {{msg}}
+     </div> -->
+     <p class="alert alert-danger text-center mt-5 h-25">{{msg}}</p>
+    {% endfor %}
+    {% endif %} 
 
 
 <footer class="bg-dark text-white text-center py-3 mt-auto">
