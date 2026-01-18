@@ -140,3 +140,6 @@ EMAIL_HOST_USER = 'projectdjango2004@gmail.com'
 EMAIL_HOST_PASSWORD = 'ubgvwcuhwmqeollc'
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+AUTH_USER_MODEL = 'myapp.User'
+

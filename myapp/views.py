@@ -4,8 +4,9 @@ from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from .forms import registerForm
-from django.core.mail import send_mail
+from django.http import HttpResponse
 from django.conf import settings
+from .decorators import student_required
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
@@ -28,33 +29,81 @@ def register_view(request):
          user.is_active = False
          user.save()
 
-         send_mail(
-            subject='regitration successfull completed',
-            message=f"hii {user.username},your account has been created successfully.",
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email],
-            fail_silently=False,
-         )
+         current_site = get_current_site(request)
+         uid = urlsafe_base64_encode(force_bytes(user.pk))
+         token = default_token_generator.make_token(user)
 
-         return redirect('login')
+         activation_link = f"http://{current_site.domain}/activate/{uid}/{token}/"
+
+         email = EmailMessage(
+            'Activate your acccount',
+            f"""
+            Hi {user.username},
+
+Click the link below to activate your account:
+
+{activation_link}
+
+If you did not register, ignore this email.
+                """,
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+         )
+         email.send()
+
+         return HttpResponse("Registration successful. Check your email to activate your account.")
    else:
          form = registerForm()
 
    return render(request,'register.html',{'form':form})   
+
+
+def activate_account(request,uidb64,token):
+   try:
+      uid = force_str(urlsafe_base64_decode(uidb64))
+      user = User.objects.get(pk=uid)
+   except(TypeError,ValueError,User.DoesNotExist):
+      user = None
+
+   if user and default_token_generator.check_token(user,token):
+      user.is_active = True
+      user.save()
+      return redirect('login')
+   else:
+      return HttpResponse("Activation link is invalid or expired.")      
+
+
+
+
   
 def login_view(request):
-   if request.method == 'POST':
-      form = AuthenticationForm(request,data=request.POST)
-      if form.is_valid():
-         user = form.get_user()
-         login(request,user)
-         return redirect('student')
-   else:
-      form = AuthenticationForm()
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
-   return render(request,'login.html')      
+        user = authenticate(request, username=username, password=password)
+
+        if user is None:
+            return render(request, 'login.html', {
+                'error': 'Invalid username or password'
+            })
+
+        if not user.is_active:
+            return render(request, 'login.html', {
+                'error': 'Account not activated. Check your email.'
+            })
+
+        login(request, user)
+        return redirect('student')
+
+    return render(request, 'login.html')     
     
 
 def logout_view(request):
-   logout(request)
-   return redirect('login')
+   if request.method == "POST":
+      logout(request)
+      return redirect('login')
+   
+@student_required
+def student_profile(request):
+   profile = student   
