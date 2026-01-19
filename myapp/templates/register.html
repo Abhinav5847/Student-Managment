@@ -29,6 +29,24 @@
          {% for error in form.email.errors %}
          <small class="text-danger">{{error}}</small>
          {% endfor %}
+
+        <input class="form-control form-control-md"
+               type="text"
+               placeholder="Enter department"
+               name="department"
+               value="{{ form.department.value|default:'' }}">
+        {% for error in form.department.errors %}
+            <small class="text-danger">{{ error }}</small>
+        {% endfor %}
+
+         <input class="form-control form-control-md"
+               type="number"
+               placeholder="Enter year of admission"
+               name="year_of_admission"
+               value="{{ form.year_of_admission.value|default:'' }}">
+        {% for error in form.year_of_admission.errors %}
+            <small class="text-danger">{{ error }}</small>
+        {% endfor %}
          
         <input class="form-control form-control-md"
          type="password"
