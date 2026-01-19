@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Edit Student | Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0">Edit Student Profile</h4>
+                </div>
+
+                <div class="card-body">
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                       
+                        <h5 class="text-primary mb-3">Account Information</h5>
+
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text"
+                                   class="form-control"
+                                   name="username"
+                                   value="{{ student.username }}"
+                                   required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email"
+                                   class="form-control"
+                                   name="email"
+                                   value="{{ student.email }}"
+                                   required>
+                        </div>
+
+                        <hr>
+
+                        <!-- STUDENT PROFILE -->
+                        <h5 class="text-primary mb-3">Academic Information</h5>
+
+                        <div class="mb-3">
+                            <label class="form-label">Department</label>
+                            <input type="text"
+                                   class="form-control"
+                                   name="department"
+                                   value="{{ profile.department }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Year of Admission</label>
+                            <input type="number"
+                                   class="form-control"
+                                   name="year_of_admission"
+                                   value="{{ profile.year_of_admission }}">
+                        </div>
+
+               
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'admin_dashboard' %}"
+                               class="btn btn-outline-danger">
+                                Cancel
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-primary px-4">
+                                Save Changes
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

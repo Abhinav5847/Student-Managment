@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+
+  
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-primary text-white rounded-top-4">
+          <h4 class="mb-0">
+             Edit Profile
+          </h4>
+        </div>
+
+        <div class="card-body">
+
+          <form method="post">
+            {% csrf_token %}
+
+     
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Email</label>
+              <input type="email"
+                     class="form-control bg-light border-secondary rounded-3 shadow-sm"
+                     name="email"
+                     value="{{ request.user.email }}"
+                     required>
+            </div>
+
+           
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Department</label>
+              <input type="text"
+                     class="form-control bg-light border-secondary rounded-3 shadow-sm"
+                     name="department"
+                     value="{{ profile.department }}">
+            </div>
+
+      
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Year of Admission</label>
+              <input type="number"
+                     class="form-control bg-light border-secondary rounded-3 shadow-sm"
+                     name="year_of_admission"
+                     value="{{ profile.year_of_admission }}">
+            </div>
+
+            
+            <div class="d-flex gap-3 mt-4">
+              <button type="submit"
+                      class="btn btn-primary rounded-pill flex-fill shadow-sm">
+                 Update Profile
+              </button>
+
+              <a href="{% url 'student_dashboard' %}"
+                 class="btn btn-danger rounded-pill flex-fill shadow-sm">
+             Cancel
+              </a>
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
