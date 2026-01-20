@@ -10,10 +10,13 @@ class registerForm(UserCreationForm):
     email = forms.EmailField(required=True)
     department = forms.CharField(required=True)
     year_of_admission = forms.IntegerField(required=True)
+    date_of_birth = forms.DateField(required=True)
+    profile_picture = forms.ImageField(required=False)
+
 
     class Meta:
         model = User
-        fields = ['username','email','password1','password2','department','year_of_admission']
+        fields = ['username','email','password1','password2','department','year_of_admission','date_of_birth','profile_picture']
 
     def save(self,commit=True):
         user = super().save(commit=False)
@@ -24,12 +27,10 @@ class registerForm(UserCreationForm):
             profile,created = StudentProfile.objects.get_or_create(user=user)
             profile.department = self.cleaned_data['department']
             profile.year_of_admission = self.cleaned_data['year_of_admission']
-            profile.save()
+            profile.date_of_birth = self.cleaned_data['date_of_birth']
 
-            # StudentProfile.objects.create(
-            #     user=user,
-            #     department=self.cleaned_data['department'],
-            #     year_of_admission=self.cleaned_data['year_of_admission']
-            # )
+            if self.cleaned_data.get('profile_picture'):
+                profile.profile_picture = self.cleaned_data['profile_picture']
+            profile.save()
 
         return user        

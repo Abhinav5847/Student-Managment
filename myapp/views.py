@@ -65,6 +65,12 @@ def student_profile_edit(request):
 
         profile.department = request.POST.get('department')
         profile.year_of_admission = request.POST.get('year_of_admission')
+        profile.date_of_birth = request.post.get('date_of_birth')
+
+        if 'profile_picture' in request.FILES:
+            profile.profile_picture = request.FILES['profile_picture']
+
+            
         profile.save()
 
         return redirect('student_dashboard')
@@ -79,25 +85,32 @@ def student(request):
 
 def register_view(request):
     if request.method == 'POST':
-        form = registerForm(request.POST)
+        form = registerForm(request.POST,request.FILES)
         if form.is_valid():
     
             user = form.save(commit=False)
             user.is_active = False
             user.save()
 
+            profile_picture = form.cleaned_data.get('profile_picture')
+
             profile, created = StudentProfile.objects.get_or_create(
                 user=user,
                 defaults={
                     'department': form.cleaned_data['department'],
-                    'year_of_admission': form.cleaned_data['year_of_admission']
+                    'year_of_admission': form.cleaned_data['year_of_admission'],
+                    'date_of_birth': form.cleaned_data['date_of_birth'],
+                    'profile_picture':profile_picture
                 }
             )
    
             if not created:
                 profile.department = form.cleaned_data['department']
                 profile.year_of_admission = form.cleaned_data['year_of_admission']
-                profile.save()
+                profile.date_of_birth = form.cleaned_data['date_of_birth']
+                if profile_picture:
+                    profile.profile_picture = profile_picture
+                profile.save()    
 
       
             current_site = get_current_site(request)
