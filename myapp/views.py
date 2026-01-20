@@ -37,6 +37,7 @@ def admin_student_edit(request,student_id):
 
         profile.department = request.POST.get('department',profile.department)
         profile.year_of_admission = request.POST.get('year_of_admission',profile.year_of_admission)
+        profile.date_of_birth = request.POST.get('year_of_date')
         profile.save()
         return redirect('admin_dashboard')
     
@@ -65,12 +66,15 @@ def student_profile_edit(request):
 
         profile.department = request.POST.get('department')
         profile.year_of_admission = request.POST.get('year_of_admission')
-        profile.date_of_birth = request.post.get('date_of_birth')
+
+        date_of_birth = request.POST.get('data_of_birth')
+        if date_of_birth:
+         profile.date_of_birth = request.POST.get('date_of_birth')
 
         if 'profile_picture' in request.FILES:
             profile.profile_picture = request.FILES['profile_picture']
 
-            
+
         profile.save()
 
         return redirect('student_dashboard')
@@ -164,7 +168,7 @@ def login_view(request):
         if user:
          login(request, user)
          messages.success(request,"LOGIN SUCCESS !")
-         return redirect('student')
+         return redirect('home')
         else:
             messages.error(request,"Invalid username or password")
 

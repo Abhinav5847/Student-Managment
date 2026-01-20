@@ -17,12 +17,13 @@
 
         <div class="card-body">
 
-          <form method="post">
+          <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
              <div class="col-12 text-center mb-3">
           {% if profile.profile_picture %}
-            <img src="{{ profile.profile_picture.url }}" 
+            <img src="{{ profile.profile_picture.url }}"
+                 name="profile_picture" 
                  alt="Profile Picture" 
                  class="img-fluid rounded-circle shadow mb-3"
                  style="width:150px; height:150px; object-fit:cover;">
@@ -66,7 +67,7 @@
 
             <div class="col-md-6">
           <label class="form-label">Date of Birth</label>
-          <input type="date" name="date_of_birth" class="form-control" value="{{ profile.date_of_birth }}">
+          <input type="date" name="date_of_birth" class="form-control" value="{{ profile.date_of_birth|date:'Y-m-d'  }}">
         </div>
 
             
