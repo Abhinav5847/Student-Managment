@@ -45,8 +45,6 @@ class StudentProfile(models.Model):
 
 #course 
 
-
-
 class Course(models.Model):
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=500)
@@ -68,6 +66,9 @@ class CoursePurchase(models.Model):
     purchased_on = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together =  ('student','course')    
+        unique_together =  ('student','course') 
+
+    def __str__(self):
+        return f"{self.student.name} added {self.course.title}"       
     
     

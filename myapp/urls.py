@@ -12,19 +12,24 @@ urlpatterns = [
     path('create_course/',views.create_course,name='create_course'),
     path('admin_course_list/',views.admin_course_list,name='admin_course_list'),
     path('edit_course/<int:course_id>/',views.admin_course_edit,name='edit_course'),
-    path('admin/courses/delete/<int:course_id>/',views.admin_course_delete,name='delete_course'),
+    path('admin_dashboard/courses/delete/<int:course_id>/',views.admin_course_delete,name='delete_course'),
     path('course_status/<int:course_id>/',views.course_status,name='course_status'),
+    path('admin_course_view/<int:course_id>/',views.admin_course_view,name='admin_course_view'),
 
     #student
     path('student_dashboard/',views.student_dashboard,name='student_dashboard'),
     path('student/profile/edit/',views.student_profile_edit,name='student_profile_edit'),
+    path('stcourse_list/',views.student_course_list,name='stcourse_list'),
+    path('stcourse_purchase/<int:course_id>',views.student_course_purchase,name='stcourse_purchase'),
+    path('my_courses/', views.my_courses, name='my_courses'),
+
 
     path("",views.student,name='home'),
+    path('about/',views.about_view,name='about'),
     path('login/',views.login_view,name='login'),
     path('register/',views.register_view,name='register'),
     path('activate/<uidb64>/<token>/',views.activate_account,name='active'),
     path('logout/',views.logout_view,name='logout'),
-    path('user_profile/',views.student_profile,name='student_profile')
 ]
 
 if settings.DEBUG:

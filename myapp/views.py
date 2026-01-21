@@ -9,6 +9,7 @@ from .decorators import admin_required
 from .models import StudentProfile
 from django.contrib import messages
 from .models import Course
+from .models import CoursePurchase
 from django.views.decorators.cache import never_cache
 
 from django.contrib.sites.shortcuts import get_current_site
@@ -24,7 +25,8 @@ User = get_user_model()
 @admin_required
 def admin_dashboard(request):
     students = User.objects.filter(role='student').select_related('student_profile')
-    return render(request,'admin_dashboard.html',{'students':students})
+    course = Course.objects.all()
+    return render(request,'admin_dashboard.html',{'students':students,'course':course})
 
 @never_cache
 @login_required
@@ -69,12 +71,20 @@ def create_course(request):
     
     return render(request,'create_course.html')
 
+
+
 @never_cache
 @login_required
 @admin_required
 def admin_course_list(request):
     courses = Course.objects.all().order_by('-created_at')
     return render(request,'admin_course_list.html',{'courses':courses})
+
+@never_cache
+@admin_required
+def admin_course_view(request,course_id):
+    course = get_object_or_404(Course,id=course_id)
+    return render(request,'admin_view_course.html',{'course':course})
 
 @never_cache
 @login_required
@@ -98,9 +108,11 @@ def admin_course_edit(request,course_id):
 @admin_required
 def admin_course_delete(request,course_id):
     course =get_object_or_404(Course,id=course_id)
-    course.delete()
-    messages.success(request,"course deleted")
-    return redirect('admin_course_list')
+
+    if request.method == 'POST':
+     course.delete()
+     messages.success(request,"course deleted")
+     return redirect('admin_course_list')
 
 @never_cache
 @login_required
@@ -116,6 +128,52 @@ def course_status(request,course_id):
 
    
 
+@never_cache
+@student_required
+def student_course_list(request):
+    courses = Course.objects.filter(is_active=True)
+
+    purchased_courses = CoursePurchase.objects.filter(
+        student=request.user,
+        is_paid = True
+    ).values_list('course_id',flat=True)
+
+    return render(
+        request,
+        'student_course_list.html',{'courses':courses,'purchase_courses':purchased_courses}
+    )
+
+@never_cache
+@student_required
+def student_course_purchase(request,course_id):
+    course = get_object_or_404(Course,id=course_id,is_active = True)
+
+    purchase,created = CoursePurchase.objects.get_or_create(
+        student=request.user,
+        course=course
+    )
+
+    if purchase.is_paid:
+        messages.info(request,"you already purchased the course")
+        return redirect('stcourse_list')
+    
+    purchase.is_paid = True
+    purchase.save()
+
+    messages.success(request,"course purshased")
+    return redirect('stcourse_list')
+
+
+@never_cache
+@login_required
+@student_required
+def my_courses(request):
+    purchases = CoursePurchase.objects.filter(
+        student=request.user,
+        is_paid=True
+    ).select_related('course')
+
+    return render(request, 'my_course.html', {'purchases': purchases})
 
 
 @never_cache
@@ -138,7 +196,7 @@ def student_profile_edit(request):
         profile.department = request.POST.get('department')
         profile.year_of_admission = request.POST.get('year_of_admission')
 
-        date_of_birth = request.POST.get('data_of_birth')
+        date_of_birth = request.POST.get('date_of_birth')
         if date_of_birth:
          profile.date_of_birth = request.POST.get('date_of_birth')
 
@@ -152,9 +210,12 @@ def student_profile_edit(request):
     
     return render(request,'students_profileedit.html',{'profile':profile}) 
 
-@never_cache
-@login_required
 @student_required
+def about_view(request):
+    return render(request,'about.html')
+
+@student_required
+@never_cache
 def student(request):
     return render(request, 'students.html')
 
@@ -224,7 +285,21 @@ def activate_account(request, uidb64, token):
         return HttpResponse("Activation link is invalid or expired.")
 
 
+def redirect_on_role(user):
+    if user.role == 'admin':
+        return redirect('admin_dashboard')
+    elif user.role == 'student':
+        return redirect('home')
+    else:
+        return redirect('login')
+
+
 def login_view(request):
+
+    if request.user.is_authenticated:
+        return redirect_on_role(request.user)
+    
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -240,28 +315,17 @@ def login_view(request):
         if user:
          login(request, user)
          messages.success(request,"LOGIN SUCCESS !")
-         return redirect('home')
+         return redirect_on_role(user)
         else:
             messages.error(request,"Invalid username or password")
 
     return render(request, 'login.html')
 
-
+@never_cache
 def logout_view(request):
-    if request.method == "POST":
         logout(request)
+        request.session.flush()
         messages.success(request,"logout")
         return redirect('login')
 
 
-@student_required
-@login_required
-def student_profile(request):
-  
-    if request.user.role != 'student':
-        return redirect('login')
-
-  
-    profile, created = StudentProfile.objects.get_or_create(user=request.user)
-
-    return render(request, 'userprofile.html', {'profile': profile})

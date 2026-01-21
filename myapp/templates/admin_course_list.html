@@ -41,7 +41,7 @@
 
           <td class="text-center">
          
-            <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle">
+            <a href="{% url 'admin_course_view' course.id %}" class="btn btn-sm btn-outline-secondary rounded-circle">
               <i class="bi bi-eye"></i>
             </a>
 
@@ -56,11 +56,15 @@
               <i class="bi bi-toggle-on"></i>
             </a>
 
-       
-            <button class="btn btn-sm btn-outline-danger rounded-circle"
-                    onclick="confirmDelete('{{ course.id }}')">
-              <i class="bi bi-trash"></i>
+            <form id="delete-form-{{course.id}}" action="{% url 'delete_course' course.id %}"
+            method="POST" style="display: inline;"
+            >
+            {% csrf_token %}
+             <button class="btn btn-sm btn-outline-danger rounded-circle"
+              <i class="bi bi-trash">delete</i>
             </button>
+
+            </form>
           </td>
         </tr>
         {% empty %}
@@ -75,20 +79,5 @@
   </div>
 </div>
 
-<script>
-function confirmDelete(courseId) {
-  Swal.fire({
-    title: 'Are you sure?',
-    text: "This course will be permanently deleted!",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    confirmButtonText: 'Yes, delete it!'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      window.location.href = `/admin/courses/delete/${courseId}/`;
-    }
-  });
-}
-</script>
+
 {% endblock %}

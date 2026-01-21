@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  
+    <div class="row mb-5 align-items-center">
+        <div class="col-md-6">
+            <h1 class="display-4 fw-bold text-primary">About Our Learning Platform</h1>
+            <p class="lead text-muted">
+                We are committed to providing high-quality online courses to help students grow their skills and achieve their goals. 
+                Learn at your own pace with expert instructors and interactive content.
+            </p>
+            <a href="{% url 'home' %}" class="btn btn-primary btn-lg mt-3">Explore Courses</a>
+        </div>
+        <div class="col-md-6 text-center">
+         
+        </div>
+    </div>
+
+    <div class="row mb-5 text-center">
+        <div class="col-md-4 mb-4">
+            <div class="p-4 border rounded shadow-sm">
+                <h4>Our Mission</h4>
+                <p class="text-muted">
+                    Empower students with knowledge and practical skills through accessible, engaging online courses.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="p-4 border rounded shadow-sm">
+                <h4>Our Vision</h4>
+                <p class="text-muted">
+                    Become the most trusted online learning platform where students can learn, grow, and succeed globally.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="p-4 border rounded shadow-sm">
+                <h4>Our Values</h4>
+                <p class="text-muted">
+                    Quality, accessibility, innovation, and student success are at the core of everything we do.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="row mb-5">
+        <div class="col-12 text-center mb-4">
+            <h2 class="fw-bold">Meet Our Team</h2>
+            <p class="text-muted">Dedicated professionals behind the platform</p>
+        </div>
+
+        <div class="col-md-3 text-center mb-4">
+            <div class="bg-secondary rounded-circle mx-auto mb-3" 
+                 style="width:120px; height:120px; display:flex; align-items:center; justify-content:center; color:white;">
+              <img src="{% static 'images/abhiram.jpg' %}"
+          alt="Abhiram"
+         class="rounded-circle"
+          style="width:120px; height:120px; object-fit:cover;">
+
+            </div>
+            <h5 class="fw-bold">Abhiram</h5>
+            <p class="text-muted">Founder & CEO</p>
+        </div>
+
+        <div class="col-md-3 text-center mb-4">
+            <div class="bg-secondary rounded-circle mx-auto mb-3" 
+                 style="width:120px; height:120px; display:flex; align-items:center; justify-content:center; color:white;">
+             <img src="{% static 'images/shadirvan.jpg' %}"
+          alt="Abhiram"
+         class="rounded-circle"
+          style="width:120px; height:120px; object-fit:cover;">
+            </div>
+            <h5 class="fw-bold">shadirvan</h5>
+            <p class="text-muted">Head of Content</p>
+        </div>
+
+        <div class="col-md-3 text-center mb-4">
+            <div class="bg-secondary rounded-circle mx-auto mb-3" 
+                 style="width:120px; height:120px; display:flex; align-items:center; justify-content:center; color:white;">
+              <img src="{% static 'images/ramees.jpg' %}"
+          alt="Abhiram"
+         class="rounded-circle"
+          style="width:120px; height:120px; object-fit:cover;">
+            </div>
+            <h5 class="fw-bold">Ramees</h5>
+            <p class="text-muted">Lead Instructor</p>
+        </div>
+
+        <div class="col-md-3 text-center mb-4">
+            <div class="bg-secondary rounded-circle mx-auto mb-3" 
+                 style="width:120px; height:120px; display:flex; align-items:center; justify-content:center; color:white;">
+              <img src="{% static 'images/ridhan.jpeg' %}"
+          alt="Abhiram"
+         class="rounded-circle"
+          style="width:120px; height:120px; object-fit:cover;">
+            </div>
+            <h5 class="fw-bold">Ridhan</h5>
+            <p class="text-muted">Analyst</p>
+        </div>
+    </div>
+
+   
+    <div class="row bg-primary text-white rounded p-5 text-center">
+        <div class="col-12">
+            <h2 class="fw-bold">Join Thousands of Students Learning Today!</h2>
+            <p>Sign up and start learning new skills to advance your career.</p>
+            <a href="" class="btn btn-light btn-lg mt-3">Get Started</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+  <h3 class="mb-4">Available Courses</h3>
+
+  <div class="row">
+    {% for course in courses %}
+      <div class="col-md-4 mb-3">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5>{{ course.title }}</h5>
+            <p>{{ course.description }}</p>
+            <p class="fw-bold">₹{{ course.price }}</p>
+
+            {% if course.id in purchased_courses %}
+              <button class="btn btn-success w-100" disabled>
+                Purchased
+              </button>
+            {% else %}
+              <a href="{% url 'stcourse_purchase' course.id %}"
+                 class="btn btn-primary w-100">
+                Buy Course
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>No courses available</p>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
