@@ -31,23 +31,36 @@ def admin_dashboard(request):
 @never_cache
 @login_required
 @admin_required
-def admin_student_edit(request,student_id):
-    student = get_object_or_404(User,pk=student_id,role='student')
-    profile,_ = StudentProfile.objects.get_or_create(user=student)
+@never_cache
+@login_required
+@admin_required
+def admin_student_edit(request, student_id):
+    student = get_object_or_404(User, pk=student_id, role='student')
+    profile, _ = StudentProfile.objects.get_or_create(user=student)
 
     if request.method == "POST":
         student.username = request.POST.get('username')
         student.email = request.POST.get('email')
         student.save()
 
-        profile.department = request.POST.get('department',profile.department)
-        profile.year_of_admission = request.POST.get('year_of_admission',profile.year_of_admission)
-        profile.date_of_birth = request.POST.get('date_of_birth',profile.date_of_birth)
-        profile.profile_picture = request.POST.get('profile_picture',profile.profile_picture)
+        profile.education = request.POST.get('education')
+        profile.year_of_admission = request.POST.get('year_of_admission')
+
+        date_of_birth = request.POST.get('date_of_birth')
+        if date_of_birth:
+            profile.date_of_birth = date_of_birth
+
+        if 'profile_picture' in request.FILES:
+            profile.profile_picture = request.FILES['profile_picture']
+
         profile.save()
         return redirect('admin_dashboard')
-    
-    return render(request,'edit_student.html',{'student':student,'profile':profile})
+
+    return render(request, 'edit_student.html', {
+        'student': student,
+        'profile': profile
+    })
+
 
 @never_cache
 @login_required
@@ -163,6 +176,20 @@ def student_course_purchase(request,course_id):
     messages.success(request,"course purshased")
     return redirect('stcourse_list')
 
+@student_required
+def remove_course_st(request,course_id):
+        purchase = get_object_or_404(
+            CoursePurchase,
+            student=request.user,
+            course_id = course_id
+        )
+
+        if request.method == 'POST':
+            purchase.delete()
+            messages.success(request,"course removed")
+
+        return redirect('my_courses')    
+
 
 @never_cache
 @login_required
@@ -193,7 +220,7 @@ def student_profile_edit(request):
         request.user.email = request.POST.get('email')
         request.user.save()
 
-        profile.department = request.POST.get('department')
+        profile.education = request.POST.get('education')
         profile.year_of_admission = request.POST.get('year_of_admission')
 
         date_of_birth = request.POST.get('date_of_birth')
@@ -234,7 +261,7 @@ def register_view(request):
             profile, created = StudentProfile.objects.get_or_create(
                 user=user,
                 defaults={
-                    'department': form.cleaned_data['department'],
+                    'eduation': form.cleaned_data['education'],
                     'year_of_admission': form.cleaned_data['year_of_admission'],
                     'date_of_birth': form.cleaned_data['date_of_birth'],
                     'profile_picture':profile_picture
@@ -242,7 +269,7 @@ def register_view(request):
             )
    
             if not created:
-                profile.department = form.cleaned_data['department']
+                profile.education = form.cleaned_data['education']
                 profile.year_of_admission = form.cleaned_data['year_of_admission']
                 profile.date_of_birth = form.cleaned_data['date_of_birth']
                 if profile_picture:

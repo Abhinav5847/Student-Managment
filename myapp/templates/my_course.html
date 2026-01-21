@@ -4,21 +4,30 @@
 <div class="container mt-4">
   <h3>My Courses</h3>
 
-  <div class="row">
-    {% for purchase in purchases %}
-      <div class="col-md-4 mb-3">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h5>{{ purchase.course.title }}</h5>
-            <p>{{ purchase.course.description }}</p>
-            <span class="badge bg-success">Purchased</span>
-          </div>
-        </div>
-      </div>
-    {% empty %}
-      <p>You haven't purchased any courses yet.</p>
-    {% endfor %}
-  </div>
+{% for item in purchases  %}
+<div class="card mb-3">
+    <div class="card-body">
+        <h5>{{ item.course.title }}</h5>
+        <p>{{ item.course.description|truncatechars:100 }}</p>
+        <p class="fw-bold">₹{{ item.course.price }}</p>
+
+        
+
+        <form method="post"
+              action="{% url 'remove_my_course' item.course.id %}"
+              class="d-inline">
+            {% csrf_token %}
+            <button type="submit"
+                    class="btn btn-danger"
+                    onclick="return confirm('Remove this course?');">
+                Remove
+            </button>
+        </form>
+    </div>
 </div>
+{% empty %}
+<p>You have no courses.</p>
+{% endfor %}
+
 
 {% endblock %}

@@ -50,10 +50,10 @@
 
         <input
           type="text"
-          name="department"
+          name="education"
           class="form-control text-black border-secondary rounded-3 shadow-sm"
-          placeholder="Department"
-          value="{{ form.department.value|default:'' }}"
+          placeholder="education"
+          value="{{ form.education.value|default:'' }}"
         >
         {% for error in form.department.errors %}
           <small class="text-danger">{{ error }}</small>

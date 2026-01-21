@@ -70,7 +70,7 @@
               <th>Username</th>
               <th>Email</th>
               <th>Roll No</th>
-              <th>Department</th>
+              <th>Education</th>
               <th>Year</th>
               <th class="text-center">Actions</th>
             </tr>
@@ -83,7 +83,7 @@
               <td class="fw-semibold">{{ student.username }}</td>
               <td>{{ student.email }}</td>
               <td>{{ student.student_profile.roll_number|default:"-" }}</td>
-              <td>{{ student.student_profile.department|default:"-" }}</td>
+              <td>{{ student.student_profile.education|default:"-" }}</td>
               <td>{{ student.student_profile.year_of_admission|default:"-" }}</td>
               
               <td class="text-center">
