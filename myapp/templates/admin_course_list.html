@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Manage Courses{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="fw-bold text-primary">
+    <i class="bi bi-journal-bookmark-fill me-2"></i>Courses
+  </h3>
+
+  <a href="{% url 'create_course' %}" class="btn btn-primary rounded-pill">
+    <i class="bi bi-plus-circle"></i> Add Course
+  </a>
+</div>
+
+<div class="card shadow-sm border-0 rounded-4">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>#</th>
+          <th>Title</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for course in courses %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td class="fw-semibold">{{ course.title }}</td>
+          <td>₹ {{ course.price }}</td>
+          <td>
+            {% if course.is_active %}
+              <span class="badge bg-success">Active</span>
+            {% else %}
+              <span class="badge bg-danger">Inactive</span>
+            {% endif %}
+          </td>
+
+          <td class="text-center">
+         
+            <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle">
+              <i class="bi bi-eye"></i>
+            </a>
+
+          
+            <a href="{% url 'edit_course' course.id %}"
+               class="btn btn-sm btn-outline-primary rounded-circle">
+              <i class="bi bi-pencil"></i>
+            </a>
+
+            <a href="{% url 'course_status' course.id %}"
+               class="btn btn-sm btn-outline-warning rounded-circle">
+              <i class="bi bi-toggle-on"></i>
+            </a>
+
+       
+            <button class="btn btn-sm btn-outline-danger rounded-circle"
+                    onclick="confirmDelete('{{ course.id }}')">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="text-center text-muted py-4">
+            No courses available
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+function confirmDelete(courseId) {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "This course will be permanently deleted!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = `/admin/courses/delete/${courseId}/`;
+    }
+  });
+}
+</script>
+{% endblock %}

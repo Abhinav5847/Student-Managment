@@ -22,6 +22,20 @@
                        
                         <h5 class="text-primary mb-3">Account Information</h5>
 
+                         <div class="col-md-4 text-center">
+          {% if profile.profile_picture %}
+            <img src="{{ profile.profile_picture.url }}" 
+                 alt="Profile Picture" 
+                 class="img-fluid rounded-circle shadow mt-3"
+                 style="width:200px; height:200px; object-fit:cover;">
+          {% else %}
+            <img src="https://via.placeholder.com/150?text=Profile+Image" 
+                 alt="Default Profile" 
+                 class="img-fluid rounded-circle shadow"
+                 style="width:150px; height:150px; object-fit:cover;">
+          {% endif %}
+        </div>
+
                         <div class="mb-3">
                             <label class="form-label">Username</label>
                             <input type="text"
@@ -42,7 +56,7 @@
 
                         <hr>
 
-                        <!-- STUDENT PROFILE -->
+                
                         <h5 class="text-primary mb-3">Academic Information</h5>
 
                         <div class="mb-3">
@@ -59,6 +73,14 @@
                                    class="form-control"
                                    name="year_of_admission"
                                    value="{{ profile.year_of_admission }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Date of Birth</label>
+                            <input type="date"
+                                   class="form-control"
+                                   name="date_of_birth"
+                                   value="{{ profile.date_of_birth }}">
                         </div>
 
                

@@ -8,6 +8,8 @@ from .decorators import student_required
 from .decorators import admin_required
 from .models import StudentProfile
 from django.contrib import messages
+from .models import Course
+from django.views.decorators.cache import never_cache
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -17,13 +19,14 @@ from django.core.mail import EmailMessage
 
 User = get_user_model()
 
-
+@never_cache
 @login_required
 @admin_required
 def admin_dashboard(request):
     students = User.objects.filter(role='student').select_related('student_profile')
     return render(request,'admin_dashboard.html',{'students':students})
 
+@never_cache
 @login_required
 @admin_required
 def admin_student_edit(request,student_id):
@@ -37,12 +40,14 @@ def admin_student_edit(request,student_id):
 
         profile.department = request.POST.get('department',profile.department)
         profile.year_of_admission = request.POST.get('year_of_admission',profile.year_of_admission)
-        profile.date_of_birth = request.POST.get('year_of_date')
+        profile.date_of_birth = request.POST.get('date_of_birth',profile.date_of_birth)
+        profile.profile_picture = request.POST.get('profile_picture',profile.profile_picture)
         profile.save()
         return redirect('admin_dashboard')
     
     return render(request,'edit_student.html',{'student':student,'profile':profile})
 
+@never_cache
 @login_required
 @admin_required
 def admin_student_delete(request,student_id):
@@ -50,13 +55,79 @@ def admin_student_delete(request,student_id):
     student.delete()
     return redirect('admin_dashboard')
 
+@never_cache
+@login_required
+@admin_required
+def create_course(request):
+    if request.method == 'POST':
+        Course.objects.create(
+            title=request.POST.get('title'),
+            description = request.POST.get('description'),
+            price = request.POST.get('price')
+        )
+        return redirect('admin_course_list')
+    
+    return render(request,'create_course.html')
 
+@never_cache
+@login_required
+@admin_required
+def admin_course_list(request):
+    courses = Course.objects.all().order_by('-created_at')
+    return render(request,'admin_course_list.html',{'courses':courses})
+
+@never_cache
+@login_required
+@admin_required
+def admin_course_edit(request,course_id):
+    course = get_object_or_404(Course,id=course_id)
+
+    if request.method == 'POST':
+        course.title = request.POST.get('title')
+        course.description = request.POST.get('description')
+        course.price = request.POST.get('price')
+        course.save()
+
+        messages.success(request,"course edited successfully")
+        return redirect('admin_course_list')
+
+    return render(request,'admin_edit_course.html',{'course':course})
+ 
+@never_cache
+@login_required
+@admin_required
+def admin_course_delete(request,course_id):
+    course =get_object_or_404(Course,id=course_id)
+    course.delete()
+    messages.success(request,"course deleted")
+    return redirect('admin_course_list')
+
+@never_cache
+@login_required
+@admin_required
+def course_status(request,course_id):
+    course = get_object_or_404(Course,id=course_id)
+    course.is_active = not course.is_active
+    course.save()
+
+    status = "activated" if course.is_active else "deactived"
+    messages.success(request,f"Course {status} success")
+    return redirect('admin_course_list')
+
+   
+
+
+
+@never_cache
 @login_required
 @student_required
 def student_dashboard(request):
     profile,created =StudentProfile.objects.get_or_create(user=request.user)
     return render(request,'students_dashboard.html',{'profile':profile})
 
+@login_required
+@student_required
+@never_cache
 def student_profile_edit(request):
     profile,_ = StudentProfile.objects.get_or_create(user=request.user)
 
@@ -81,8 +152,9 @@ def student_profile_edit(request):
     
     return render(request,'students_profileedit.html',{'profile':profile}) 
 
-
-
+@never_cache
+@login_required
+@student_required
 def student(request):
     return render(request, 'students.html')
 

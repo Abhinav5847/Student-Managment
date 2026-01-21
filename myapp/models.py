@@ -41,6 +41,33 @@ class StudentProfile(models.Model):
         super().save(*args,**kwargs)        
 
     def __str__(self):
-        return f"{self.user.username} - {self.roll_number}"     
+        return f"{self.user.username} - {self.roll_number}" 
+
+#course 
+
+
+
+class Course(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.CharField(max_length=500)
+    price = models.DecimalField(max_digits=8,decimal_places=2)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+    
+class CoursePurchase(models.Model):
+    student = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete = models.CASCADE,
+        limit_choices_to={'role':'student'}
+    )
+    course = models.ForeignKey(Course,on_delete=models.CASCADE) 
+    is_paid = models.BooleanField(default=False)
+    purchased_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together =  ('student','course')    
     
     

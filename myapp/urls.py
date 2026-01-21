@@ -9,6 +9,11 @@ urlpatterns = [
     path('admin_dashboard/',views.admin_dashboard,name='admin_dashboard'),
     path('student/<int:student_id>/edit/',views.admin_student_edit,name='admin_student_edit'),
     path('student/<int:student_id>/delete/',views.admin_student_delete,name='admin_student_delete'),
+    path('create_course/',views.create_course,name='create_course'),
+    path('admin_course_list/',views.admin_course_list,name='admin_course_list'),
+    path('edit_course/<int:course_id>/',views.admin_course_edit,name='edit_course'),
+    path('admin/courses/delete/<int:course_id>/',views.admin_course_delete,name='delete_course'),
+    path('course_status/<int:course_id>/',views.course_status,name='course_status'),
 
     #student
     path('student_dashboard/',views.student_dashboard,name='student_dashboard'),
