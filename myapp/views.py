@@ -20,6 +20,7 @@ from django.core.mail import EmailMessage
 
 User = get_user_model()
 
+
 @never_cache
 @admin_required
 def admin_dashboard(request):
@@ -93,7 +94,6 @@ def admin_course_view(request,course_id):
     return render(request,'admin_view_course.html',{'course':course})
 
 @never_cache
-@login_required
 @admin_required
 def admin_course_edit(request,course_id):
     course = get_object_or_404(Course,id=course_id)
@@ -170,6 +170,7 @@ def student_course_purchase(request,course_id):
     messages.success(request,"course purshased")
     return redirect('stcourse_list')
 
+@never_cache
 @student_required
 def remove_course_st(request,course_id):
         purchase = get_object_or_404(
@@ -238,37 +239,29 @@ def about_view(request):
 def student(request):
     return render(request, 'students.html')
 
-
 def register_view(request):
     if request.method == 'POST':
-        form = registerForm(request.POST,request.FILES)
+        form = registerForm(request.POST, request.FILES)
         if form.is_valid():
-    
+            # Save user
             user = form.save(commit=False)
             user.is_active = False
             user.save()
 
-            profile_picture = form.cleaned_data.get('profile_picture')
+          
+            profile, created = StudentProfile.objects.get_or_create(user=user)
 
-            profile, created = StudentProfile.objects.get_or_create(
-                user=user,
-                defaults={
-                    'education': form.cleaned_data['education'],
-                    'year_of_admission': form.cleaned_data['year_of_admission'],
-                    'date_of_birth': form.cleaned_data['date_of_birth'],
-                    'profile_picture':profile_picture
-                }
-            )
-   
-            if not created:
-                profile.education = form.cleaned_data['education']
-                profile.year_of_admission = form.cleaned_data['year_of_admission']
-                profile.date_of_birth = form.cleaned_data['date_of_birth']
-                if profile_picture:
-                    profile.profile_picture = profile_picture
-                profile.save()    
+          
+            profile.education = form.cleaned_data.get('education')
+            profile.year_of_admission = form.cleaned_data.get('year_of_admission')
+            profile.date_of_birth = form.cleaned_data.get('date_of_birth')
 
-      
+           
+            if 'profile_picture' in request.FILES:
+                profile.profile_picture = request.FILES['profile_picture']
+
+            profile.save()
+
             current_site = get_current_site(request)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
