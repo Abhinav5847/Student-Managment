@@ -69,6 +69,6 @@ class CoursePurchase(models.Model):
         unique_together =  ('student','course') 
 
     def __str__(self):
-        return f"{self.student.name} added {self.course.title}"       
+        return f"{self.student.username} added {self.course.title}"       
     
     

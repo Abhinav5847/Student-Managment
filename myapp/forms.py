@@ -4,7 +4,7 @@ from .models import User
 from .models import StudentProfile
 from django.contrib.auth import get_user_model
 
-user = get_user_model()
+# user = get_user_model()
 
 class registerForm(UserCreationForm):
     email = forms.EmailField(required=True)

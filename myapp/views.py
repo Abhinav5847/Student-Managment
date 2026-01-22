@@ -21,18 +21,14 @@ from django.core.mail import EmailMessage
 User = get_user_model()
 
 @never_cache
-@login_required
 @admin_required
 def admin_dashboard(request):
     students = User.objects.filter(role='student').select_related('student_profile')
     course = Course.objects.all()
     return render(request,'admin_dashboard.html',{'students':students,'course':course})
 
+
 @never_cache
-@login_required
-@admin_required
-@never_cache
-@login_required
 @admin_required
 def admin_student_edit(request, student_id):
     student = get_object_or_404(User, pk=student_id, role='student')
@@ -63,7 +59,6 @@ def admin_student_edit(request, student_id):
 
 
 @never_cache
-@login_required
 @admin_required
 def admin_student_delete(request,student_id):
     student = get_object_or_404(User,pk=student_id,role='student')
@@ -71,7 +66,6 @@ def admin_student_delete(request,student_id):
     return redirect('admin_dashboard')
 
 @never_cache
-@login_required
 @admin_required
 def create_course(request):
     if request.method == 'POST':
@@ -87,7 +81,6 @@ def create_course(request):
 
 
 @never_cache
-@login_required
 @admin_required
 def admin_course_list(request):
     courses = Course.objects.all().order_by('-created_at')
@@ -115,9 +108,9 @@ def admin_course_edit(request,course_id):
         return redirect('admin_course_list')
 
     return render(request,'admin_edit_course.html',{'course':course})
+
  
 @never_cache
-@login_required
 @admin_required
 def admin_course_delete(request,course_id):
     course =get_object_or_404(Course,id=course_id)
@@ -126,9 +119,10 @@ def admin_course_delete(request,course_id):
      course.delete()
      messages.success(request,"course deleted")
      return redirect('admin_course_list')
+    
+    return redirect('admin_course_list')
 
 @never_cache
-@login_required
 @admin_required
 def course_status(request,course_id):
     course = get_object_or_404(Course,id=course_id)
@@ -192,7 +186,6 @@ def remove_course_st(request,course_id):
 
 
 @never_cache
-@login_required
 @student_required
 def my_courses(request):
     purchases = CoursePurchase.objects.filter(
@@ -204,13 +197,12 @@ def my_courses(request):
 
 
 @never_cache
-@login_required
 @student_required
 def student_dashboard(request):
     profile,created =StudentProfile.objects.get_or_create(user=request.user)
     return render(request,'students_dashboard.html',{'profile':profile})
 
-@login_required
+
 @student_required
 @never_cache
 def student_profile_edit(request):
@@ -261,7 +253,7 @@ def register_view(request):
             profile, created = StudentProfile.objects.get_or_create(
                 user=user,
                 defaults={
-                    'eduation': form.cleaned_data['education'],
+                    'education': form.cleaned_data['education'],
                     'year_of_admission': form.cleaned_data['year_of_admission'],
                     'date_of_birth': form.cleaned_data['date_of_birth'],
                     'profile_picture':profile_picture
