@@ -231,7 +231,7 @@ def student_profile_edit(request):
     return render(request,'students_profileedit.html',{'profile':profile}) 
 
 @student_required
-def about_view(request):
+def     about_view(request):
     return render(request,'about.html')
 
 @student_required
